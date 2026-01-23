@@ -1,11 +1,10 @@
 package io.github.cciglesiasmartinez.microservice_template.domain.port.out;
 
-import java.util.List;
 import java.util.Optional;
 
-import io.github.cciglesiasmartinez.microservice_template.domain.model.Film;
-import io.github.cciglesiasmartinez.microservice_template.domain.model.valueobjects.FilmId;
-import io.github.cciglesiasmartinez.microservice_template.domain.model.valueobjects.Title;
+import io.github.cciglesiasmartinez.microservice_template.domain.model.film.Film;
+import io.github.cciglesiasmartinez.microservice_template.domain.model.film.valueobjects.FilmId;
+import io.github.cciglesiasmartinez.microservice_template.domain.model.film.valueobjects.TmdbId;
 import io.github.cciglesiasmartinez.microservice_template.domain.shared.PageResult;
 
 public interface FilmRepository {
@@ -15,11 +14,8 @@ public interface FilmRepository {
 
     // READ
     Optional<Film> findById(FilmId id);
-    List<Film> findAll();
-    Optional<Film> findByTitle(Title title); // opcional
-
-    boolean existsById(FilmId id);
-    boolean existsByTitle(Title title);      // opcional
+    PageResult<Film> findPage(int page, int size);
+    Optional<Film> findByTmdbId(TmdbId tmdbId);
 
     // UPDATE
     Film update(Film film); // lanza si no existe
@@ -30,6 +26,6 @@ public interface FilmRepository {
 
 	Film save(Film film);
 	
-	PageResult<Film> findPage(int page, int size);
+
 
 }

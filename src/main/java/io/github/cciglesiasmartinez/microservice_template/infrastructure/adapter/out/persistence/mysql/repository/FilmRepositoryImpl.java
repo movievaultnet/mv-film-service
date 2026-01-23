@@ -1,17 +1,16 @@
 package io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.out.persistence.mysql.repository;
 
-import java.util.List;
 import java.util.Optional;
 
+import io.github.cciglesiasmartinez.microservice_template.domain.model.film.valueobjects.TmdbId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.github.cciglesiasmartinez.microservice_template.domain.model.Film;
-import io.github.cciglesiasmartinez.microservice_template.domain.model.valueobjects.FilmId;
-import io.github.cciglesiasmartinez.microservice_template.domain.model.valueobjects.Title;
+import io.github.cciglesiasmartinez.microservice_template.domain.model.film.Film;
+import io.github.cciglesiasmartinez.microservice_template.domain.model.film.valueobjects.FilmId;
 import io.github.cciglesiasmartinez.microservice_template.domain.port.out.FilmRepository;
 import io.github.cciglesiasmartinez.microservice_template.domain.shared.PageResult;
 import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.out.persistence.mysql.entity.FilmEntity;
@@ -36,26 +35,6 @@ public class FilmRepositoryImpl implements FilmRepository {
     @Override
     public Optional<Film> findById(FilmId id) {
         return springDataFilmRepository.findById(id.value()).map(mapper::toDomain);
-    }
-
-    @Override
-    public List<Film> findAll() {
-        return springDataFilmRepository.findAll().stream().map(mapper::toDomain).toList();
-    }
-
-    @Override
-    public Optional<Film> findByTitle(Title title) {
-        return springDataFilmRepository.findByTitle(title.value()).map(mapper::toDomain);
-    }
-
-    @Override
-    public boolean existsById(FilmId id) {
-        return springDataFilmRepository.existsById(id.value());
-    }
-
-    @Override
-    public boolean existsByTitle(Title title) {
-        return springDataFilmRepository.existsByTitle(title.value());
     }
 
     @Override
@@ -102,6 +81,11 @@ public class FilmRepositoryImpl implements FilmRepository {
             p.hasNext(),
             p.hasPrevious()
         );
+    }
+
+    @Override
+    public Optional<Film> findByTmdbId(TmdbId tmdbId) {
+        return springDataFilmRepository.findByTmdbId(tmdbId.value()).map(mapper::toDomain);
     }
 }
 

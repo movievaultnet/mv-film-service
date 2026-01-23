@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.slf4j.MDC;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -15,8 +16,8 @@ import org.slf4j.MDC;
 @NoArgsConstructor
 public abstract class DomainEvent {
 
-    private String requestId;
-    private String eventType;
+    protected String requestId;
+    protected String eventType;
 
     public DomainEvent(String eventType) {
         this.requestId = MDC.get("requestId");

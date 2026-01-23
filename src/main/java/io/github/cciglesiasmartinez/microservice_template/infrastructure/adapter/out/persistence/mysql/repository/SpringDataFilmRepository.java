@@ -13,5 +13,6 @@ public interface SpringDataFilmRepository extends JpaRepository<FilmEntity, Stri
     Optional<FilmEntity> findByTitle(String title);
     Optional<FilmEntity> findByTitleIgnoreCase(String title);
     List<FilmEntity> findAllByTitleContainingIgnoreCase(String title);
-    
+    boolean existsByTmdbId(Long tmdbId);
+    Optional<FilmEntity> findByTmdbId(long value);
 }

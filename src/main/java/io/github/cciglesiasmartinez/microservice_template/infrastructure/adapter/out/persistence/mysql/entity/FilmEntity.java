@@ -24,6 +24,9 @@ public class FilmEntity implements Serializable {
     @EqualsAndHashCode.Include
     private String id; // FilmId como String (UUID)
 
+    @Column(name = "tmdb_id")
+    private Long tmdbId;
+
     @Column(nullable = false, length = 255)
     private String title;
 

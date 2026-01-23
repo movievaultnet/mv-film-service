@@ -1,17 +1,21 @@
 package io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web;
 
 import io.github.cciglesiasmartinez.microservice_template.application.port.in.FilmUseCase;
-import io.github.cciglesiasmartinez.microservice_template.application.usecases.ListFilmsUseCase;
-import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.requests.CreateFilmRequest;
-import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.requests.UpdateFilmRequest;
-import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.responses.*;
-import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.responses.listfilmsresponse.ListFilmsResponse;
+import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.common.responses.Envelope;
+import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.film.requests.CreateFilmRequest;
+import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.film.requests.UpdateFilmRequest;
+import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.common.responses.ListGenericResponse;
+import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.tmdb.requests.TmdbDiscoverRequest;
+import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.film.responses.*;
+import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.tmdb.requests.TmdbSearchRequest;
+import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.tmdb.responses.TmdbFilmListResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 public class FilmController {
 
     private final FilmUseCase filmUseCase;
-    private final ListFilmsUseCase listFilmsUseCase;
 
     @Operation(summary = "Retrieves a film.", description = "Retrieves a film given its identifier.")
     @ApiResponses(@ApiResponse(responseCode = "200", description = "Film retrieved successfully."))
@@ -42,15 +45,15 @@ public class FilmController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "List film (paged).")
-    @ApiResponses(@ApiResponse(responseCode ="200", description = "films retived succefully."))
+    @Operation(summary = "List films (paged).")
+    @ApiResponses(@ApiResponse(responseCode ="200", description = "films retrieved successfully."))
     @GetMapping
-    public ResponseEntity<Envelope<ListFilmsResponse>> listFilms(
+    public ResponseEntity<Envelope<ListGenericResponse>> listFilms(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-       Envelope<ListFilmsResponse> env = listFilmsUseCase.execute(page, size);
-       return ResponseEntity.ok(env);
+       Envelope<ListGenericResponse> response = filmUseCase.listFilms(page, size);
+       return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Deletes a film.", description = "Deletes a film by its identifier.")
@@ -69,27 +72,22 @@ public class FilmController {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
     
-    // --> http://api.nuestraapp.com/films/tmdb?tile="loquesea"&year="loquefuese"
-    /*
-     * Aquí básicamente lo que vas a tener que hacer es:
-     * 1. Averiguar qué opciones te da el API de TMDB para hacer búsquedas
-     * 2. Definir una serie de RequestParams que utilizar en las búsquedas.
-     * Este punto NO tiene por qué ser necesario, depende de cómo funcione TMDB.
-     * 3. Hacer una petición API con los datos a buscar en TMDB y recibirla.
-     * 4. Mapear esta petición a un List<Film> con los datos que nos interesan
-     * 5. Servir la lista
-     */
-    
-//    @GetMapping("/tmdb")
-//    public ResponseEntity<Envelope<SearchTmdbResponse>> searchTmdb(@RequestParam String title, @RequestParam int year) {
-//    	return null;
-//    }
-    
-    // Recuerda que preferentemente intentaremos que sea Envelope<TmdbSearchResponse> y no Mono, pero si hay que usar Mono
-    // está bien --> Investiga esto.
-    
-    // crearemos aquí el controller que llamará al filmUseCase.tmdbSearch(request) donde el request sera un DTO con los filtros
-    
+    @Operation(summary = "Discover TMDB films.", description = "Call TMDB discover/movie using the provided filters.")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "TMDB results retrieved successfully."))
+    @PostMapping("/tmdb/discover")
+    public ResponseEntity<Envelope<TmdbFilmListResponse>> discoverTmdb(@Valid @RequestBody TmdbDiscoverRequest request) {
+        Envelope<TmdbFilmListResponse> response = filmUseCase.tmdbDiscover(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Search TMDB films.", description = "Call TMDB search using provided data.")
+    @ApiResponses(@ApiResponse(responseCode = "200", description = "TMDB results retrieved successfully."))
+    @PostMapping("/tmdb/search")
+    public ResponseEntity<Envelope<TmdbFilmListResponse>> searchTmdb(@Valid @RequestBody TmdbSearchRequest request) {
+        Envelope<TmdbFilmListResponse> response = filmUseCase.tmdbSearch(request);
+        return ResponseEntity.ok(response);
+    }
+
 
 }
 

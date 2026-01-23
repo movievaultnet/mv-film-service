@@ -2,8 +2,8 @@ package io.github.cciglesiasmartinez.microservice_template.infrastructure.adapte
 
 import org.springframework.stereotype.Component;
 
-import io.github.cciglesiasmartinez.microservice_template.domain.model.Film;
-import io.github.cciglesiasmartinez.microservice_template.domain.model.valueobjects.*;
+import io.github.cciglesiasmartinez.microservice_template.domain.model.film.Film;
+import io.github.cciglesiasmartinez.microservice_template.domain.model.film.valueobjects.*;
 import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.out.persistence.mysql.entity.FilmEntity;
 
 @Component
@@ -15,6 +15,7 @@ public final class FilmEntityMapperImpl implements FilmEntityMapper {
 
         return Film.of(
             FilmId.of(entity.getId()),
+            TmdbId.of(entity.getTmdbId()),
             Title.of(entity.getTitle()),
             entity.getDescription() != null ? Description.of(entity.getDescription()) : null,
             ReleaseYear.of(entity.getReleaseYear()),
@@ -29,7 +30,8 @@ public final class FilmEntityMapperImpl implements FilmEntityMapper {
         if (film == null) return null;
 
         FilmEntity e = new FilmEntity();
-        e.setId(film.itemId().getValue());
+        e.setId(film.id().getValue());
+        e.setTmdbId(film.tmdbId().value());
         e.setTitle(film.title().value());
         e.setDescription(film.description() != null ? film.description().value() : null);
         e.setReleaseYear(film.releaseYear().value());
