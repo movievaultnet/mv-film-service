@@ -66,12 +66,15 @@ public class CreateEditionUseCase {
                 .editionId(edition.editionId().value())
                 .filmId(film.id().value())
                 .filmTitle(film.title().value())
+                .filmSummary(film.description().value())
                 .slug(edition.slug().value())
                 .coverPicture(edition.coverPicture())
                 .barCode(edition.barCode().value())
                 .country(edition.country().value())
                 .format(edition.format().name())
                 .releaseYear(edition.releaseYear())
+                .packagingType(edition.packagingType().name())
+                .notes(edition.notes().value())
                 .build();
         domainEventPublisher.publish(event);
     }
