@@ -22,6 +22,7 @@ public class EditionCreatedEvent extends DomainEvent {
     private final Year releaseYear;
     private final String packagingType;
     private final String notes;
+    private final String filmSummary;
 
     @Builder
     private EditionCreatedEvent(
@@ -35,7 +36,8 @@ public class EditionCreatedEvent extends DomainEvent {
             String format,
             Year releaseYear,
             String packagingType,
-            String notes
+            String notes,
+            String filmSummary
     ) {
         super(EditionCreatedEvent.class.getSimpleName());
         this.editionId = editionId;
@@ -49,6 +51,7 @@ public class EditionCreatedEvent extends DomainEvent {
         this.releaseYear = releaseYear;
         this.packagingType = packagingType;
         this.notes = notes;
+        this.filmSummary = filmSummary;
     }
 
 }

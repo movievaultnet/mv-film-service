@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 // TODO: Change this ugly name
 // TODO: Trim this DTO properly
 
+@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

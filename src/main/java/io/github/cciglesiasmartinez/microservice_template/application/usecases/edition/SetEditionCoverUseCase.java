@@ -1,9 +1,10 @@
 package io.github.cciglesiasmartinez.microservice_template.application.usecases.edition;
 
+import io.github.cciglesiasmartinez.microservice_template.domain.event.DomainEventPublisher;
+import io.github.cciglesiasmartinez.microservice_template.domain.event.edition.EditionUpdatedEvent;
 import io.github.cciglesiasmartinez.microservice_template.domain.model.edition.Edition;
 import io.github.cciglesiasmartinez.microservice_template.domain.model.edition.Picture;
-import io.github.cciglesiasmartinez.microservice_template.domain.model.edition.valueobjects.EditionId;
-import io.github.cciglesiasmartinez.microservice_template.domain.model.edition.valueobjects.PictureId;
+import io.github.cciglesiasmartinez.microservice_template.domain.model.edition.valueobjects.*;
 import io.github.cciglesiasmartinez.microservice_template.domain.port.out.EditionRepository;
 import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.common.responses.Envelope;
 import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.common.responses.Meta;
@@ -18,6 +19,25 @@ import org.springframework.stereotype.Service;
 public class SetEditionCoverUseCase {
 
     private final EditionRepository editionRepository;
+    private DomainEventPublisher domainEventPublisher;
+
+    private EditionUpdatedEvent buildEditionUpdatedEvent(Edition updated) {
+        EditionUpdatedEvent event = EditionUpdatedEvent.builder()
+                .editionId(updated.editionId().value())
+                .filmId(updated.film().id().value())
+                .filmTitle(updated.film().title().value())
+                .filmSummary(updated.film().description().value())
+                .slug(updated.slug().value())
+                .coverPicture(updated.coverPicture())
+                .barCode(updated.barCode().value())
+                .country(updated.country().value())
+                .format(updated.format().name())
+                .releaseYear(updated.releaseYear())
+                .packagingType(updated.packagingType().name())
+                .notes(updated.notes().value())
+                .build();
+        return event;
+    }
 
     private Edition getEditionFrom(EditionId id) {
         return editionRepository.findById(id)
@@ -40,7 +60,11 @@ public class SetEditionCoverUseCase {
         PictureId targetPicture = PictureId.of(pictureId);
         if (!setCoverPicture(edition, targetPicture))
             throw new RuntimeException("Picture ID not found");
-        Edition updated = editionRepository.update(edition); // TODO: Figure why updated.getCoverPicture() doesn't show.
+        Edition updated = editionRepository.update(edition);
+        log.info("!!! TENEMOS ESTA EDITION PVTA {}", updated.toString());
+        EditionUpdatedEvent event = buildEditionUpdatedEvent(updated);
+        log.info("!!! PUBLICAMOS ESTE EVENTO PERRA {}", event.toString());
+        domainEventPublisher.publish(event);
         SetEditionCoverResponse data = new SetEditionCoverResponse(edition.coverPicture(), true);
         return new Envelope<>(data, new Meta());
     }

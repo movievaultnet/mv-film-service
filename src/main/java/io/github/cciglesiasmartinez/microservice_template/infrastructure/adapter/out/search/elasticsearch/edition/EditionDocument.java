@@ -1,17 +1,21 @@
 package io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.out.search.elasticsearch.edition;
 
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Document(indexName = "editions")
 @Data
 @Builder
+@AllArgsConstructor
 public class EditionDocument {
 
     @Id
@@ -48,9 +52,12 @@ public class EditionDocument {
     private String notes;
 
     @Field(type = FieldType.Text, analyzer = "english")
-    private String searchableText; // title + notes
+    private String searchableText; // title + notes + country + barCode + filmSummary
+
+    @Field(type = FieldType.Text, analyzer = "english")
+    private String filmSummary;
 
     @Field(type = FieldType.Date)
-    private LocalDateTime indexedAt;
+    private LocalDate indexedAt;
 
 }

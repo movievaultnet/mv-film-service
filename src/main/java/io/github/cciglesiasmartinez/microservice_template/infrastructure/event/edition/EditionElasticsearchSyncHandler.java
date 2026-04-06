@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component
@@ -40,23 +41,28 @@ public class EditionElasticsearchSyncHandler {
                 .releaseYear(event.getReleaseYear().getValue())
                 .packagingType(event.getPackagingType())
                 .notes(event.getNotes())
-                .indexedAt(LocalDateTime.now())
+                .indexedAt(LocalDate.now())
+                .filmSummary(event.getFilmSummary())
                 .searchableText(buildSearchableText(
                         event.getFilmTitle(),
                         event.getBarCode(),
                         event.getCountry(),
+                        event.getFilmSummary(),
                         event.getNotes()))
                 .build();
-        editionSearchRepository.save(edition);
+        log.info("Saving EditionDocument {}", edition.toString());
+        EditionDocument ed = editionSearchRepository.save(edition);
+        log.info("Saved EditionDocument {}", ed.toString());
     }
 
     @EventListener
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleEditionUpdatedEvent(EditionUpdatedEvent event) {
-        log.info("Handling EditionUpdatedEvent {}", event.getRequestId());
+        log.info("Handling EditionUpdatedEvent {}", event.toString());
         EditionDocument edition = getEditionDocument(event);
         updateEditionDocumentFromEvent(edition, event);
+        log.info("!!!! UPDATING AND SAVING EditionDocument {}", edition.toString());
         editionSearchRepository.save(edition);
     }
 
@@ -68,8 +74,8 @@ public class EditionElasticsearchSyncHandler {
                 });
     }
 
-    private String buildSearchableText(String filmTitle, String barCode, String country, String notes) {
-        String[] texts = { filmTitle, barCode, country, notes };
+    private String buildSearchableText(String filmTitle, String barCode, String country, String description, String notes) {
+        String[] texts = { filmTitle, barCode, country, description, notes };
         StringBuilder sb = new StringBuilder();
         for (String t : texts) {
             if (t != null && !t.isBlank()) {
@@ -91,6 +97,7 @@ public class EditionElasticsearchSyncHandler {
                 event.getFilmTitle(),
                 event.getBarCode(),
                 event.getCountry(),
+                event.getFilmSummary(),
                 event.getNotes())
         );
     }

@@ -4,9 +4,11 @@ import io.github.cciglesiasmartinez.microservice_template.domain.event.DomainEve
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.Year;
 
+@ToString
 @Getter
 @Setter
 public class EditionUpdatedEvent extends DomainEvent {
@@ -22,6 +24,7 @@ public class EditionUpdatedEvent extends DomainEvent {
     private final Year releaseYear;
     private final String packagingType;
     private final String notes;
+    private final String filmSummary;
 
     @Builder
     private EditionUpdatedEvent(
@@ -35,7 +38,8 @@ public class EditionUpdatedEvent extends DomainEvent {
             String format,
             Year releaseYear,
             String packagingType,
-            String notes
+            String notes,
+            String filmSummary
     ) {
         super(EditionCreatedEvent.class.getSimpleName());
         this.editionId = editionId;
@@ -49,6 +53,7 @@ public class EditionUpdatedEvent extends DomainEvent {
         this.releaseYear = releaseYear;
         this.packagingType = packagingType;
         this.notes = notes;
+        this.filmSummary = filmSummary;
     }
 
 }

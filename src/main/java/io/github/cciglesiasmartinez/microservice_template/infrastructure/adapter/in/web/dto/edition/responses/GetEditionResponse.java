@@ -5,14 +5,12 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.github.cciglesiasmartinez.microservice_template.domain.model.edition.Edition;
 import io.github.cciglesiasmartinez.microservice_template.domain.model.edition.Picture;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Year;
 import java.util.List;
 
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -31,6 +29,7 @@ public class GetEditionResponse {
     private Year releaseYear;
     private String packagingType;
     private boolean verified;
+    private String coverPicture;
     private String notes;
 
     private List<GetPictureResponse> pictures;
@@ -56,6 +55,7 @@ public class GetEditionResponse {
                 edition.releaseYear(),
                 edition.packagingType().name(),
                 true,
+                edition.coverPicture(),
                 edition.notes().value(),
                 createPictureListFrom(edition.pictures()));
     }
