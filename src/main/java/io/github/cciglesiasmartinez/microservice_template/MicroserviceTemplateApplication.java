@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.cache.annotation.EnableCaching;
 
 /**
  * Este es el punto de entrada de la aplicación, y anotaremos tanto {@code OpenAPIDefinition} para la documentación
@@ -18,6 +19,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.out.persistence.mysql.repository")
 @EntityScan(basePackages = "io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.out.persistence.mysql.entity")
+@EnableCaching
 public class MicroserviceTemplateApplication {
 
 	public static void main(String[] args) {

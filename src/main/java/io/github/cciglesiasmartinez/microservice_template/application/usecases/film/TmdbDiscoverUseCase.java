@@ -6,6 +6,7 @@ import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter
 import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.tmdb.responses.TmdbFilmListResponse;
 import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.tmdb.wrappers.TmdbVideoWrapper;
 import io.github.cciglesiasmartinez.microservice_template.infrastructure.adapter.in.web.dto.tmdb.responses.TmdbVideoListResponse;
+import org.springframework.cache.annotation.Cacheable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class TmdbDiscoverUseCase {
 
     private final WebClient tmdbWebClient;
 
+    @Cacheable(value = "tmdbDiscover", key = "{#request.page, #request.language, #request.sortBy}", unless = "#result == null")
     public Envelope<TmdbFilmListResponse> execute(TmdbDiscoverRequest request) {
         TmdbFilmListResponse response = tmdbWebClient.get()
                 .uri(uriBuilder -> uriBuilder
