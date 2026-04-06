@@ -31,7 +31,7 @@ public class DeleteItemUseCase {
     public Envelope<DeleteItemResponse> execute(String id, String userId) {
         ItemId itemId = ItemId.of(id);
         Item item = getItemFrom(itemId);
-        checkIfUserIsValid(item.id().value(), userId);
+        checkIfUserIsValid(item.userId(), userId);
         itemRepository.deleteById(itemId);
         DeleteItemResponse data = new DeleteItemResponse(itemId.value(), true);
         log.info("Item {} deleted", itemId.value());

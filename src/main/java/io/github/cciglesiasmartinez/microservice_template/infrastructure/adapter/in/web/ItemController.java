@@ -53,7 +53,7 @@ public class ItemController {
     @Operation(summary = "Deletes an item.", description = "Deletes the item by its id.")
     @ApiResponses(@ApiResponse(responseCode = "201", description = "Item deleted successfully."))
     @DeleteMapping("{id}")
-    public ResponseEntity<Envelope<DeleteItemResponse>> deleteItem(String id, Authentication authentication) {
+    public ResponseEntity<Envelope<DeleteItemResponse>> deleteItem(@PathVariable String id, Authentication authentication) {
         Envelope<DeleteItemResponse> response = itemUseCase.deleteItem(id, authentication.getName());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
